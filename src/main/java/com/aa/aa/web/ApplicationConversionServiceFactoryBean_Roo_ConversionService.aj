@@ -4,6 +4,7 @@
 package com.aa.aa.web;
 
 import com.aa.aa.domain.Delivery;
+import com.aa.aa.domain.Hi;
 import com.aa.aa.web.ApplicationConversionServiceFactoryBean;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.core.convert.converter.Converter;
@@ -37,10 +38,37 @@ privileged aspect ApplicationConversionServiceFactoryBean_Roo_ConversionService 
         };
     }
     
+    public Converter<Hi, String> ApplicationConversionServiceFactoryBean.getHiToStringConverter() {
+        return new org.springframework.core.convert.converter.Converter<com.aa.aa.domain.Hi, java.lang.String>() {
+            public String convert(Hi hi) {
+                return new StringBuilder().append(hi.getName()).toString();
+            }
+        };
+    }
+    
+    public Converter<Long, Hi> ApplicationConversionServiceFactoryBean.getIdToHiConverter() {
+        return new org.springframework.core.convert.converter.Converter<java.lang.Long, com.aa.aa.domain.Hi>() {
+            public com.aa.aa.domain.Hi convert(java.lang.Long id) {
+                return Hi.findHi(id);
+            }
+        };
+    }
+    
+    public Converter<String, Hi> ApplicationConversionServiceFactoryBean.getStringToHiConverter() {
+        return new org.springframework.core.convert.converter.Converter<java.lang.String, com.aa.aa.domain.Hi>() {
+            public com.aa.aa.domain.Hi convert(String id) {
+                return getObject().convert(getObject().convert(id, Long.class), Hi.class);
+            }
+        };
+    }
+    
     public void ApplicationConversionServiceFactoryBean.installLabelConverters(FormatterRegistry registry) {
         registry.addConverter(getDeliveryToStringConverter());
         registry.addConverter(getIdToDeliveryConverter());
         registry.addConverter(getStringToDeliveryConverter());
+        registry.addConverter(getHiToStringConverter());
+        registry.addConverter(getIdToHiConverter());
+        registry.addConverter(getStringToHiConverter());
     }
     
     public void ApplicationConversionServiceFactoryBean.afterPropertiesSet() {
